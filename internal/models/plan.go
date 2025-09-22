@@ -5,7 +5,7 @@ import (
 )
 
 type Plan struct {
-	Id        uuid.UUID `json:"id"`
-	Completed bool      `json:"completed"`
-	Idea      string    `json:"idea"`
+	Id         uuid.UUID `json:"id"`
+	Completed  bool      `json:"completed"`
+	Suggestion string    `json:"suggestion"`
 }

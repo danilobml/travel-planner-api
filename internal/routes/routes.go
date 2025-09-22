@@ -5,10 +5,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetPlannerRouter(router *gin.Engine) *gin.Engine {
+func GetPlannerRouter(router *gin.Engine, pc *controllers.PlanController) *gin.Engine {
 	plannerRoutes := router.Group("/plan")
 
-	plannerRoutes.POST("/create", controllers.CreatePlan)
+	plannerRoutes.POST("/create", pc.CreateNewPlan)
+	plannerRoutes.GET("/", pc.GetAllPlans)
+	plannerRoutes.GET("/:id", pc.GetPlanById)
 
 	return router
 }
