@@ -3,38 +3,22 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/danilobml/travel-planner-api/internal/repositories"
+	"github.com/danilobml/travel-planner-api/internal/dtos"
+	"github.com/danilobml/travel-planner-api/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 type PlanController struct {
-	repository repositories.PlanRepository
+	service services.PlanService
 }
 
-type CreatePlanRequest struct {
-	Season    string   `json:"season"`
-	Interests []string `json:"interests"`
-	Budget    int      `json:"budget"`
-}
-
-type CreatePlanResponse struct {
-	Id        uuid.UUID `json:"id"`
-	Completed bool      `json:"completed"`
-}
-
-type GetPlanResponse struct {
-	Id         uuid.UUID `json:"id"`
-	Completed  bool      `json:"completed"`
-	Suggestion string    `json:"suggestion"`
-}
-
-func NewPlanController(repository repositories.PlanRepository) *PlanController {
-	return &PlanController{repository: repository}
+func NewPlanController(service services.PlanService) *PlanController {
+	return &PlanController{service: service}
 }
 
 func (pc *PlanController) CreateNewPlan(c *gin.Context) {
-	var req CreatePlanRequest
+	var req dtos.CreatePlanRequestDto
 
 	err := c.BindJSON(req)
 	if err != nil {
@@ -44,11 +28,11 @@ func (pc *PlanController) CreateNewPlan(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, generatePlan(req))
+	c.JSON(http.StatusOK, pc.service.GeneratePlan(req))
 }
 
 func (pc *PlanController) GetAllPlans(c *gin.Context) {
-	plans, _ := pc.repository.GetAll()
+	plans, _ := pc.service.ListAllPlans()
 
 	c.JSON(http.StatusOK, plans)
 }
@@ -62,7 +46,7 @@ func (pc *PlanController) GetPlanById(c *gin.Context) {
 		return
 	}
 
-	plan, err := pc.repository.GetById(id)
+	plan, err := pc.service.FindPlanById(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message": "Plan not found",
@@ -70,7 +54,7 @@ func (pc *PlanController) GetPlanById(c *gin.Context) {
 		return
 	}
 
-	planResponse := GetPlanResponse{
+	planResponse := dtos.GetPlanResponseDto{
 		Id:         plan.Id,
 		Completed:  plan.Completed,
 		Suggestion: plan.Suggestion,

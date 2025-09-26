@@ -6,6 +6,7 @@ import (
 	"github.com/danilobml/travel-planner-api/internal/controllers"
 	"github.com/danilobml/travel-planner-api/internal/repositories"
 	"github.com/danilobml/travel-planner-api/internal/routes"
+	"github.com/danilobml/travel-planner-api/internal/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +14,8 @@ func main() {
 	r := gin.Default()
 
 	planRepository := repositories.NewInMemoryPlanRepository()
-	planController := controllers.NewPlanController(planRepository)
+	planService := services.NewPlanService(planRepository)
+	planController := controllers.NewPlanController(planService)
 
 	routes.GetPlannerRouter(r, planController)
 
