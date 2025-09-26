@@ -6,7 +6,6 @@ import (
 	"github.com/google/uuid"
 )
 
-
 type PlanServiceImplementation struct {
 	repository repositories.PlanRepository
 }
@@ -18,12 +17,25 @@ func NewPlanService(repository repositories.PlanRepository) *PlanServiceImplemen
 func (ps *PlanServiceImplementation) GeneratePlan(req dtos.CreatePlanRequestDto) dtos.CreatePlanResponseDto {
 	uuid := uuid.New()
 
-	newPlanResponse := dtos.CreatePlanResponseDto{
-		Id: uuid,
-		Completed: true,
+	llmResponse, err := requestLlmPlan(uuid, req.Budget, req.Season, req.Interests)
+	if err != nil {
+		return dtos.CreatePlanResponseDto{
+			Id:        uuid,
+			Completed: false,
+		}
 	}
 
-	return newPlanResponse 
+	var plan Plan
+	plan.Id = uuid
+	plan.Suggestion = llmResponse.Response
+	plan.Completed = true
+
+	ps.repository.Create(plan)
+
+	return dtos.CreatePlanResponseDto{
+		Id:        uuid,
+		Completed: true,
+	}
 }
 
 func (ps *PlanServiceImplementation) ListAllPlans() ([]*Plan, error) {
@@ -34,7 +46,6 @@ func (ps *PlanServiceImplementation) ListAllPlans() ([]*Plan, error) {
 
 	return plans, nil
 }
-
 
 func (ps *PlanServiceImplementation) FindPlanById(id uuid.UUID) (*Plan, error) {
 	plan, err := ps.repository.GetById(id)

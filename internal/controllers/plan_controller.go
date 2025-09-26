@@ -20,7 +20,7 @@ func NewPlanController(service services.PlanService) *PlanController {
 func (pc *PlanController) CreateNewPlan(c *gin.Context) {
 	var req dtos.CreatePlanRequestDto
 
-	err := c.BindJSON(req)
+	err := c.BindJSON(&req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Bad request",
