@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/danilobml/travel-planner-api/internal/controllers"
+	"github.com/danilobml/travel-planner-api/internal/db"
 	"github.com/danilobml/travel-planner-api/internal/repositories"
 	"github.com/danilobml/travel-planner-api/internal/routes"
 	"github.com/danilobml/travel-planner-api/internal/services"
@@ -37,7 +38,14 @@ func main() {
 	}
 	llmRepository := repositories.NewLangchainGoogleLlmRepository(llmClient)
 
-	planRepository := repositories.NewInMemoryPlanRepository()
+	// In Memory (non-persistent) repo:
+	// planRepository := repositories.NewInMemoryPlanRepository()
+
+	// Gorm/Postgres
+	DB := db.Init()
+
+	planRepository := repositories.NewPgPlanRepository(DB)
+	
 	planService := services.NewPlanService(planRepository, llmRepository)
 	planController := controllers.NewPlanControllerImplementation(planService)
 
