@@ -46,7 +46,7 @@ func (pc *PlanControllerImplementation) CreateNewPlan(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"response": planResponse})
+	c.JSON(http.StatusCreated, gin.H{"response": planResponse})
 }
 
 func (pc *PlanControllerImplementation) GetAllPlans(c *gin.Context) {
