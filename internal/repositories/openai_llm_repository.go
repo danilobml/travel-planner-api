@@ -6,7 +6,6 @@ import (
 	"log"
 
 	"github.com/danilobml/travel-planner-api/internal/dtos"
-	"github.com/google/uuid"
 	"github.com/openai/openai-go/v2"
 )
 
@@ -18,22 +17,23 @@ func NewOpenaiLlmRepository(llmClient *openai.Client) *OpenaiLlmRepository {
 	return &OpenaiLlmRepository{llmClient: llmClient}
 }
 
-func (lr *OpenaiLlmRepository) RequestLlmPlan(id uuid.UUID, place string, days int, budget int, season string, interests []string) (dtos.LlmResponseDto, error) {
+func (lr *OpenaiLlmRepository) RequestLlmPlan(req dtos.LlmRequestDto) (*dtos.LlmResponseDto, error) {
 
-	log.Printf("Generating new plan with id: %s.", id)
+	log.Printf("Generating new plan with id: %s.", req.Id)
 
 	placeText := "Suggest a location"
-	if place != "" {
-		placeText = fmt.Sprintf("It must be in %s", place)
+	if req.Place != "" {
+		placeText = fmt.Sprintf("It must be in %s", req.Place)
 	}
-	
-	daysText := fmt.Sprintf("%d days", days)
-	if days == 0 {
+
+	daysText := fmt.Sprintf("%d days", req.Days)
+	if req.Days == 0 {
 		daysText = "an open-ended number of days"
 	}
+
 	prompt := fmt.Sprintf(
 		"Generate a travel plan suggestion for the %s, with a budget of $%d, for %s. %s. The focus should be on: %v",
-		season, budget, daysText, placeText, interests,
+		req.Season, req.Budget, daysText, placeText, req.Interests,
 	)
 
 	chatCompletion, err := lr.llmClient.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
@@ -43,12 +43,12 @@ func (lr *OpenaiLlmRepository) RequestLlmPlan(id uuid.UUID, place string, days i
 		Model: openai.ChatModelGPT4o,
 	})
 	if err != nil {
-		return dtos.LlmResponseDto{}, err
+		return nil, err
 	}
 
 	llmResponse := chatCompletion.Choices[0].Message.Content
 
-	return dtos.LlmResponseDto{
+	return &dtos.LlmResponseDto{
 		Response: llmResponse,
 	}, nil
 }

@@ -6,7 +6,6 @@ import (
 	"log"
 
 	"github.com/danilobml/travel-planner-api/internal/dtos"
-	"github.com/google/uuid"
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/llms/googleai"
 )
@@ -19,33 +18,33 @@ func NewLangchainGoogleLlmRepository(llmClient *googleai.GoogleAI) *LangchainGoo
 	return &LangchainGoogleLlmRepository{llmClient: llmClient}
 }
 
-func (lr *LangchainGoogleLlmRepository) RequestLlmPlan(id uuid.UUID, place string, days int, budget int, season string, interests []string) (dtos.LlmResponseDto, error) {
+func (lr *LangchainGoogleLlmRepository) RequestLlmPlan(req dtos.LlmRequestDto) (*dtos.LlmResponseDto, error) {
 
-	log.Printf("Generating new plan with id: %s.", id)
+	log.Printf("Generating new plan with id: %s.", req.Id)
 
 	placeText := "Suggest a location"
-	if place != "" {
-		placeText = fmt.Sprintf("It must be in %s", place)
+	if req.Place != "" {
+		placeText = fmt.Sprintf("It must be in %s", req.Place)
 	}
 
-	daysText := fmt.Sprintf("%d days", days)
-	if days == 0 {
+	daysText := fmt.Sprintf("%d days", req.Days)
+	if req.Days == 0 {
 		daysText = "an open-ended number of days"
 	}
 
 	prompt := fmt.Sprintf(
 		"Generate a travel plan suggestion for the %s, with a budget of $%d, for %s. %s. The focus should be on: %v",
-		season, budget, daysText, placeText, interests,
+		req.Season, req.Budget, daysText, placeText, req.Interests,
 	)
 
 	answer, err := lr.llmClient.Call(context.TODO(), prompt, llms.WithMaxTokens(3000))
 	if err != nil {
-		return dtos.LlmResponseDto{}, err
+		return nil, err
 	}
 
 	log.Println(answer)
 
-	return dtos.LlmResponseDto{
+	return &dtos.LlmResponseDto{
 		Response: answer,
 	}, nil
 }

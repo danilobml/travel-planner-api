@@ -18,7 +18,16 @@ func NewPlanService(planRepository repositories.PlanRepository, llmRepository re
 func (ps *PlanServiceImplementation) GeneratePlan(req dtos.CreatePlanRequestDto) (dtos.CreatePlanResponseDto, error) {
 	uuid := uuid.New()
 
-	llmResponse, err := ps.llmRepository.RequestLlmPlan(uuid, req.Place, req.Days, req.Budget, req.Season, req.Interests)
+	llmrequest := dtos.LlmRequestDto{
+		Id: uuid,
+		Place: req.Place,
+		Days: req.Days,
+		Season: req.Season,
+		Interests: req.Interests,
+		Budget: req.Budget,
+	}
+
+	llmResponse, err := ps.llmRepository.RequestLlmPlan(llmrequest)
 	if err != nil {
 		return dtos.CreatePlanResponseDto{
 			Id:        uuid,

@@ -10,6 +10,7 @@ import (
 	"github.com/danilobml/travel-planner-api/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+
 	// "github.com/openai/openai-go/v2"
 	"github.com/tmc/langchaingo/llms/googleai"
 )
