@@ -1,6 +1,10 @@
 package services
 
 import (
+	"errors"
+	"fmt"
+	"math/rand"
+
 	"github.com/danilobml/travel-planner-api/internal/dtos"
 	"github.com/danilobml/travel-planner-api/internal/repositories"
 	"github.com/google/uuid"
@@ -65,4 +69,31 @@ func (ps *PlanServiceImplementation) FindPlanById(id uuid.UUID) (*Plan, error) {
 	}
 
 	return plan, nil
+}
+
+func (ps *PlanServiceImplementation) GetRevisitedPlanForSeason() (*Plan, error) {
+	season := findCurrentSeason()
+	
+	plans, err := ps.planRepository.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	if len(plans) == 0 {
+		return nil, errors.New("no plans were yet created")
+	}
+
+	var seasonPlans []*Plan
+	for _, plan := range plans {
+		if (plan.Season == season) {
+			seasonPlans = append(seasonPlans, plan)
+		}
+	}
+	if len(seasonPlans) == 0 {
+		message := fmt.Sprintf("no plans exist for the curren season (%s)", season)
+		return nil, errors.New(message)
+	}
+
+	randomPlan := seasonPlans[rand.Intn(len(seasonPlans))]
+
+	return randomPlan, nil
 }

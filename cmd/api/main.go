@@ -39,7 +39,7 @@ func main() {
 
 	planRepository := repositories.NewInMemoryPlanRepository()
 	planService := services.NewPlanService(planRepository, llmRepository)
-	planController := controllers.NewPlanController(planService)
+	planController := controllers.NewPlanControllerImplementation(planService)
 
 	// Http server:
 	r := gin.Default()

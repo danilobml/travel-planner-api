@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetPlannerRouter(router *gin.Engine, pc *controllers.PlanController) *gin.Engine {
+func GetPlannerRouter(router *gin.Engine, pc controllers.PlanControllerGin) *gin.Engine {
 	router.GET("/health", heatlthCheck)
 
 	plannerRoutes := router.Group("/plans")
@@ -13,6 +13,7 @@ func GetPlannerRouter(router *gin.Engine, pc *controllers.PlanController) *gin.E
 	plannerRoutes.POST("/create", pc.CreateNewPlan)
 	plannerRoutes.GET("/", pc.GetAllPlans)
 	plannerRoutes.GET("/:id", pc.GetPlanById)
+	plannerRoutes.GET("/revisit", pc.Revisit)
 
 	return router
 }
