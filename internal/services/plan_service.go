@@ -9,7 +9,7 @@ import (
 type Plan = models.Plan
 
 type PlanService interface {
-	GeneratePlan(req dtos.CreatePlanRequestDto) dtos.CreatePlanResponseDto
+	GeneratePlan(req dtos.CreatePlanRequestDto) (dtos.CreatePlanResponseDto, error)
 	ListAllPlans() ([]*Plan, error)
 	FindPlanById(id uuid.UUID) (*Plan, error)
 }

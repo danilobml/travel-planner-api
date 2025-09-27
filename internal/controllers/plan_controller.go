@@ -28,7 +28,13 @@ func (pc *PlanController) CreateNewPlan(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, pc.service.GeneratePlan(req))
+	planResponse, err := pc.service.GeneratePlan(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"response": planResponse, "error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"response": planResponse})
 }
 
 func (pc *PlanController) GetAllPlans(c *gin.Context) {

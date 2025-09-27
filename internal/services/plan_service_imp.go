@@ -7,22 +7,23 @@ import (
 )
 
 type PlanServiceImplementation struct {
-	repository repositories.PlanRepository
+	planRepository repositories.PlanRepository
+	llmRepository  repositories.LlmRepository
 }
 
-func NewPlanService(repository repositories.PlanRepository) *PlanServiceImplementation {
-	return &PlanServiceImplementation{repository: repository}
+func NewPlanService(planRepository repositories.PlanRepository, llmRepository repositories.LlmRepository) *PlanServiceImplementation {
+	return &PlanServiceImplementation{planRepository: planRepository, llmRepository: llmRepository}
 }
 
-func (ps *PlanServiceImplementation) GeneratePlan(req dtos.CreatePlanRequestDto) dtos.CreatePlanResponseDto {
+func (ps *PlanServiceImplementation) GeneratePlan(req dtos.CreatePlanRequestDto) (dtos.CreatePlanResponseDto, error) {
 	uuid := uuid.New()
 
-	llmResponse, err := requestLlmPlan(uuid, req.Budget, req.Season, req.Interests)
+	llmResponse, err := ps.llmRepository.RequestLlmPlan(uuid, req.Place, req.Days, req.Budget, req.Season, req.Interests)
 	if err != nil {
 		return dtos.CreatePlanResponseDto{
 			Id:        uuid,
 			Completed: false,
-		}
+		}, err
 	}
 
 	var plan Plan
@@ -30,16 +31,16 @@ func (ps *PlanServiceImplementation) GeneratePlan(req dtos.CreatePlanRequestDto)
 	plan.Suggestion = llmResponse.Response
 	plan.Completed = true
 
-	ps.repository.Create(plan)
+	ps.planRepository.Create(plan)
 
 	return dtos.CreatePlanResponseDto{
 		Id:        uuid,
 		Completed: true,
-	}
+	}, nil
 }
 
 func (ps *PlanServiceImplementation) ListAllPlans() ([]*Plan, error) {
-	plans, err := ps.repository.GetAll()
+	plans, err := ps.planRepository.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +49,7 @@ func (ps *PlanServiceImplementation) ListAllPlans() ([]*Plan, error) {
 }
 
 func (ps *PlanServiceImplementation) FindPlanById(id uuid.UUID) (*Plan, error) {
-	plan, err := ps.repository.GetById(id)
+	plan, err := ps.planRepository.GetById(id)
 	if err != nil {
 		return nil, err
 	}

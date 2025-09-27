@@ -8,6 +8,8 @@ type CreatePlanResponseDto struct {
 }
 
 type CreatePlanRequestDto struct {
+	Place     string   `json:"place"`
+	Days      int      `json:"days"`
 	Season    string   `json:"season"`
 	Interests []string `json:"interests"`
 	Budget    int      `json:"budget"`
