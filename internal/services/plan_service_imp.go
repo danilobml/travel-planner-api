@@ -37,6 +37,7 @@ func (ps *PlanServiceImplementation) GeneratePlan(req dtos.CreatePlanRequestDto)
 
 	var plan Plan
 	plan.Id = uuid
+	plan.Season = req.Season
 	plan.Suggestion = llmResponse.Response
 	plan.Completed = true
 

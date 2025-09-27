@@ -6,6 +6,7 @@ import (
 	"github.com/danilobml/travel-planner-api/internal/dtos"
 	"github.com/danilobml/travel-planner-api/internal/services"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 )
 
@@ -24,6 +25,17 @@ func (pc *PlanController) CreateNewPlan(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Bad request",
+		})
+		return
+	}
+
+	validate := validator.New()
+	err = validate.Struct(req)
+	if err != nil {
+		errors := err.(validator.ValidationErrors)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Bad request",
+			"errors":  errors.Error(),
 		})
 		return
 	}

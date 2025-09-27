@@ -1,6 +1,8 @@
 package dtos
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type CreatePlanResponseDto struct {
 	Id        uuid.UUID `json:"id"`
@@ -10,9 +12,9 @@ type CreatePlanResponseDto struct {
 type CreatePlanRequestDto struct {
 	Place     string   `json:"place"`
 	Days      int      `json:"days"`
-	Season    string   `json:"season"`
+	Season    string   `json:"season" validate:"required,oneof='winter' 'summer' 'fall' 'spring'"`
 	Interests []string `json:"interests"`
-	Budget    int      `json:"budget"`
+	Budget    int      `json:"budget" validate:"required"`
 }
 
 type GetPlanResponseDto struct {

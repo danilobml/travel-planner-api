@@ -8,4 +8,5 @@ type Plan struct {
 	Id         uuid.UUID `json:"id"`
 	Completed  bool      `json:"completed"`
 	Suggestion string    `json:"suggestion"`
+	Season     string    `json:"-"`
 }
