@@ -73,12 +73,13 @@ GOOGLE_API_KEY=abc...
 
 (Only the api key from the chosen model is required)
 
-## Choosing LLM api and model
-at ./cmd/api/main.go
+## Choosing LLM API and model
 
 By default Gemini 2.5 pro is selected. Uncomment the OpenAi section (and comment out the Gemini one), to select it. You can also change the model (refer to `www.openai.com` or `www.gemini.com`):
 
 ```go
+// at ./cmd/api/main.go:
+
 func main() {
     ...
 
