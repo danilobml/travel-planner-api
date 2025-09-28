@@ -36,6 +36,7 @@ A RESTful API built with Go and Gin to generate, store, and revisit travel plans
 - Langchain for LLM calls
 - Testify for testing
 - Playground validator
+- Secure middleware for security
 - Air for hot reload in dev mode
 - PostgresDb in Docker container
 
