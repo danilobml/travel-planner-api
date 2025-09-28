@@ -38,7 +38,7 @@ func main() {
 	}
 	llmRepository := repositories.NewLangchainGoogleLlmRepository(llmClient)
 
-	// In Memory (non-persistent) repo:
+	// In Memory (non-persistent) test repo:
 	// planRepository := repositories.NewInMemoryPlanRepository()
 
 	// Gorm/Postgres
