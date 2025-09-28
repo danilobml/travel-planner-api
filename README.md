@@ -3,23 +3,24 @@
 A RESTful API built with Go and Gin to generate, store, and revisit travel plans, using LLMs. This service demonstrates clean architecture with controllers, services, repositories, DTOs, routes, and tests.
 
 ## Table of Contents
-- Features
-- Tech Stack
-- Project Structure
-- Getting Started
-  - Prerequisites
-  - Environment Variables
-  - Run Locally
-  - Run with Docker Compose
-- Makefile Workflow
-- Testing
-- Configuration
-- API Reference
-  - Health Check
-  - Create New Plan
-  - Get All Plans
-  - Get One Plan
-  - Revisit Plan
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Environment Variables](#environment-variables)
+  - [Run Locally](#run-locally)
+  - [Run with Docker Compose](#run-with-docker-compose)
+- [Makefile Workflow](#makefile-workflow)
+- [Testing](#testing)
+- [Configuration](#configuration)
+- [API Reference](#api-reference)
+  - [Health Check](#health-check)
+  - [Create New Plan](#create-new-plan)
+  - [Get All Plans](#get-all-plans)
+  - [Get One Plan](#get-one-plan)
+  - [Revisit Plan](#revisit-plan)
+
 
 ## Features
 - Create a new travel plan with place, days, budget, season, and interests
@@ -35,6 +36,7 @@ A RESTful API built with Go and Gin to generate, store, and revisit travel plans
 - Langchain for LLM calls
 - Testify for testing
 - Playground validator
+- Secure middleware for security
 - Air for hot reload in dev mode
 - PostgresDb in Docker container
 
@@ -62,20 +64,23 @@ A RESTful API built with Go and Gin to generate, store, and revisit travel plans
 ### Environment Variables
 Create a .env (or export in your shell) and adjust values as needed:
 
+```env
 PORT=8080
 ENVIRONMENT=development
 POSTGRES_URL="postgres://pg:pass@localhost:5432/plans"
 OPENAI_API_KEY=abc...
 GOOGLE_API_KEY=abc...
+```
 
 (Only the api key from the chosen model is required)
 
-## Choosing LLM api and model
-at ./cmd/api/main.go
+## Choosing LLM API and model
 
 By default Gemini 2.5 pro is selected. Uncomment the OpenAi section (and comment out the Gemini one), to select it. You can also change the model (refer to `www.openai.com` or `www.gemini.com`):
 
 ```go
+// at ./cmd/api/main.go:
+
 func main() {
     ...
 
@@ -90,9 +95,7 @@ func main() {
 		context.Background(),
 		googleai.WithDefaultModel("gemini-2.5-flash-lite"),
 	)
-	if err != nil {
-		log.Panic("Llm initialization failed")
-	}
+    ...
 	llmRepository := repositories.NewLangchainGoogleLlmRepository(llmClient)
     
     ...
@@ -100,20 +103,20 @@ func main() {
 ```
 
 ### Run Locally
-1) Clone the repo: git clone https://github.com/danilobml/travel-planner-api.git
-2) Change directory: cd travel-planner-api
+1) Clone the repo: `git clone https://github.com/danilobml/travel-planner-api.git`
+2) Change directory: `cd travel-planner-api`
 3) run in dev: `make dev`
 4) or build and run in production mode `make run`
 
 ## Makefile Workflow
 Targets (example):
 - dev: starts docker services, waits for DB, runs air for live reload
-- up: docker-compose up -d database
-- down: docker-compose down
-- wait-db: loop until postgres is ready using pg_isready
-- build: go build ./cmd/api -o ./api
+- up: spins up the database
+- down: stops the db container
+- wait-db: loop and waits until postgres in container is ready
+- build: builds for prod
 - run: sets ENVIRONMENT=production and runs the API
-- test: go test ./... -v
+- test: all tests
 
 ## Testing
 - Run all tests:
@@ -125,7 +128,7 @@ make test
 
 ### Health Check
 - Method and path: GET /health
-- Success response body: { "ok": true }
+- Success response body: {"health-check": "OK!"}
 
 ### Create New Plan
 - Method and path: POST /plans/create
@@ -135,7 +138,6 @@ make test
 
 - Possible errors:
   - 400 Bad Request (invalid JSON or validation error)
-  - 415 Unsupported Media Type (wrong Content-Type)
 
 ### Get All Plans
 - Method and path: GET /plans
@@ -151,4 +153,6 @@ make test
 ### Revisit Plan
 - Method and path: GET /plans/revisit
 - Example success response body: plan object with id, suggestion, completed
+
+* 500 - internal server error is a common error for the feature endpoints.
 
