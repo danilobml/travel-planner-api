@@ -3,23 +3,24 @@
 A RESTful API built with Go and Gin to generate, store, and revisit travel plans, using LLMs. This service demonstrates clean architecture with controllers, services, repositories, DTOs, routes, and tests.
 
 ## Table of Contents
-- Features
-- Tech Stack
-- Project Structure
-- Getting Started
-  - Prerequisites
-  - Environment Variables
-  - Run Locally
-  - Run with Docker Compose
-- Makefile Workflow
-- Testing
-- Configuration
-- API Reference
-  - Health Check
-  - Create New Plan
-  - Get All Plans
-  - Get One Plan
-  - Revisit Plan
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Environment Variables](#environment-variables)
+  - [Run Locally](#run-locally)
+  - [Run with Docker Compose](#run-with-docker-compose)
+- [Makefile Workflow](#makefile-workflow)
+- [Testing](#testing)
+- [Configuration](#configuration)
+- [API Reference](#api-reference)
+  - [Health Check](#health-check)
+  - [Create New Plan](#create-new-plan)
+  - [Get All Plans](#get-all-plans)
+  - [Get One Plan](#get-one-plan)
+  - [Revisit Plan](#revisit-plan)
+
 
 ## Features
 - Create a new travel plan with place, days, budget, season, and interests
@@ -62,11 +63,13 @@ A RESTful API built with Go and Gin to generate, store, and revisit travel plans
 ### Environment Variables
 Create a .env (or export in your shell) and adjust values as needed:
 
+```env
 PORT=8080
 ENVIRONMENT=development
 POSTGRES_URL="postgres://pg:pass@localhost:5432/plans"
 OPENAI_API_KEY=abc...
 GOOGLE_API_KEY=abc...
+```
 
 (Only the api key from the chosen model is required)
 
