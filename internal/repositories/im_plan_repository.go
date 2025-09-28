@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"errors"
+	"slices"
 	"sync"
 
 	"github.com/google/uuid"
@@ -50,4 +51,18 @@ func (r *InMemoryPlanRepository) Create(p Plan) error {
 	r.data = append(r.data, p)
 
 	return nil
+}
+
+func (r * InMemoryPlanRepository) Delete(id uuid.UUID) error {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	for i, plan := range r.data {
+		if (plan.Id == id) {
+			r.data = slices.Delete(r.data, i, i + 1)
+			return nil
+		}
+	}
+
+	return errors.New("plan not found")
 }

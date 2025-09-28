@@ -13,4 +13,5 @@ type PlanService interface {
 	ListAllPlans() ([]*Plan, error)
 	FindPlanById(id uuid.UUID) (*Plan, error)
 	GetRevisitedPlanForSeason() (*Plan, error)
+	DeletePlan(id uuid.UUID) error
 }

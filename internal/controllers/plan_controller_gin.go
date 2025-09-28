@@ -7,4 +7,5 @@ type PlanControllerGin interface {
 	GetAllPlans(c *gin.Context)
 	GetPlanById(c *gin.Context)
 	Revisit(c *gin.Context)
+	DeletePlan(c *gin.Context)
 }

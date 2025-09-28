@@ -26,6 +26,7 @@ func GetPlannerRouter(router *gin.Engine, pc controllers.PlanControllerGin) *gin
 	plannerRoutes.GET("/", pc.GetAllPlans)
 	plannerRoutes.GET("/:id", pc.GetPlanById)
 	plannerRoutes.GET("/revisit", pc.Revisit)
+	plannerRoutes.DELETE("/:id", pc.DeletePlan)
 
 	return router
 }

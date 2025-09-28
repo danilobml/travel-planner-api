@@ -11,4 +11,5 @@ type PlanRepository interface {
 	GetAll() ([]*Plan, error)
 	GetById(id uuid.UUID) (*Plan, error)
 	Create(p Plan) error
+	Delete(id uuid.UUID) error
 }

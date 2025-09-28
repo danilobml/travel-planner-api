@@ -54,3 +54,10 @@ func (m *MockPlanService) GetRevisitedPlanForSeason() (*models.Plan, error) {
 		Season:     "winter",
 	}, nil
 }
+
+func (m *MockPlanService) DeletePlan(id uuid.UUID) error {
+	if id.String() != "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" {
+		return errors.New("plan not found")
+	}
+	return nil
+}

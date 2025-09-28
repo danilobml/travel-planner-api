@@ -63,3 +63,15 @@ func (r *PgPlanRepository) Create(p Plan) error {
 
 	return nil
 }
+
+func (r * PgPlanRepository) Delete(id uuid.UUID) error {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	result := r.DB.Delete(&Plan{}, id)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}

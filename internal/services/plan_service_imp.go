@@ -97,3 +97,12 @@ func (ps *PlanServiceImplementation) GetRevisitedPlanForSeason() (*Plan, error) 
 
 	return randomPlan, nil
 }
+
+func (ps *PlanServiceImplementation) DeletePlan(id uuid.UUID) error {
+	err := ps.planRepository.Delete(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

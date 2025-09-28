@@ -9,9 +9,9 @@ import (
 
 	"github.com/danilobml/travel-planner-api/internal/controllers"
 	"github.com/danilobml/travel-planner-api/internal/dtos"
+	"github.com/danilobml/travel-planner-api/mocks"
 	"github.com/danilobml/travel-planner-api/internal/models"
 	"github.com/danilobml/travel-planner-api/internal/routes"
-	"github.com/danilobml/travel-planner-api/tests/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 )
@@ -22,7 +22,7 @@ func setupServer() *httptest.Server {
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
 
-	pc := controllers.NewPlanControllerImplementation(mockService)
+	pc := controllers.NewPlanControllerGinImplementation(mockService)
 	router := routes.GetPlannerRouter(r, pc)
 
 	return httptest.NewTLSServer(router)
@@ -153,7 +153,6 @@ func Test_PlanRoutes_GetOnePlan(t *testing.T) {
 	require.Equal(t, true, resp.Completed)
 }
 
-
 func Test_PlanRoutes_GetOnePlan_InvalidUUID(t *testing.T) {
 	srv := setupServer()
 	defer srv.Close()
@@ -196,4 +195,32 @@ func Test_PlanRoutes_Revisit(t *testing.T) {
 	require.Equal(t, "", resp.Season)
 	require.Equal(t, "Revisited plan suggestion", resp.Suggestion)
 	require.Equal(t, true, resp.Completed)
+}
+
+func Test_PlanRoutes_DeletePlan(t *testing.T) {
+	srv := setupServer()
+	defer srv.Close()
+
+	client := srv.Client()
+
+	req, err := http.NewRequest("DELETE", srv.URL + "/plans/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", nil)
+	require.NoError(t, err)
+
+	res, err := client.Do(req)
+	require.NoError(t, err)
+	require.Equal(t, "204 No Content", res.Status)
+}
+
+func Test_PlanRoutes_DeletePlan_WrongId(t *testing.T) {
+	srv := setupServer()
+	defer srv.Close()
+
+	client := srv.Client()
+
+	req, err := http.NewRequest("DELETE", srv.URL + "/plans/cccccccc-cccc-cccc-cccc-cccccccccccc", nil)
+	require.NoError(t, err)
+
+	res, err := client.Do(req)
+	require.NoError(t, err)
+	require.Equal(t, http.StatusNotFound, res.StatusCode)
 }
